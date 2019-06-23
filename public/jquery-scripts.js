@@ -1,4 +1,7 @@
-const weatherRecords = []; // global to access from chart callback
+/* global to access from chart callback */
+const weatherRecords = [];
+
+/* Chart.js config */
 const config = {
   legend: { display: false },
   scales: {
@@ -7,13 +10,11 @@ const config = {
         gridLines: { display: false },
         ticks: {
           callback: (val, ind, values) => {
-            // shorten and skip some date ticks
+            /* shorten and skip some date ticks */
             let fields = val.split(' ');
             if (ind % 2 === 0)
               if (ind === 0 || fields[0] !== values[ind - 2].split(' ')[0]) {
                 return fields[0];
-              } else {
-                // return fields[1];
               }
             return '';
           }
@@ -35,7 +36,7 @@ const config = {
 };
 
 $(document).ready(() => {
-  // chart.js setup
+  /* chart.js setup */
   Chart.defaults.global.defaultFontFamily = 'Oswald';
   const dataset = {
     label: 'Temperature',
@@ -81,10 +82,9 @@ function putWeather(locat, chart) {
     .then(weather => {
       console.log(weather);
 
-      $('#description').html(`As of ${weather.time.day}
-          ${weather.time.hour % 12 === 0 ? '12' : weather.time.hour % 12}:${
-        weather.time.minute < 10 ? '0' + weather.time.minute : weather.time.minute
-      }
+      let hour = weather.time.hour % 12 === 0 ? '12' : weather.time.hour % 12;
+      let min = weather.time.minute < 10 ? '0' + weather.time.minute : weather.time.minute;
+      $('#description').html(`As of ${weather.time.day} ${hour}:${min}
           ${weather.time.hour < 12 ? 'AM' : 'PM'},
           the weather in ${weather.locale.location}, ${weather.locale.country} consists of
           ${weather.weather}.<br>The temperature is ${weather.current}°F, with a max today of
@@ -163,7 +163,7 @@ function putWeather(locat, chart) {
       replaceDays.replaceWith(days);
       replaceForecasts.replaceWith(forecasts);
 
-      // update chart
+      /* update chart */
       chart.data.labels = times;
       chart.data.datasets[0].data = temps;
       chart.update();
