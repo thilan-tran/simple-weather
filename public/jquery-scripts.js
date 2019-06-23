@@ -34,7 +34,7 @@ const config = {
   }
 };
 
-document.addEventListener('DOMContentLoaded', event => {
+$(document).ready(() => {
   // chart.js setup
   Chart.defaults.global.defaultFontFamily = 'Oswald';
   const dataset = {
@@ -60,11 +60,11 @@ document.addEventListener('DOMContentLoaded', event => {
     console.log('Geolocation is not available.');
   }
 
-  let input = document.getElementById('locat');
-  input.value = '';
-  input.onchange = () => {
-    putWeather(input.value, chart);
-  };
+  $('#locat')
+    .val('')
+    .change(() => {
+      putWeather($('#locat').val(), chart);
+    });
 });
 
 function putWeather(locat, chart) {
@@ -81,45 +81,37 @@ function putWeather(locat, chart) {
     .then(weather => {
       console.log(weather);
 
-      document.getElementById('description').innerHTML = `As of ${weather.time.day}
+      $('#description').html(`As of ${weather.time.day}
           ${weather.time.hour % 12 === 0 ? '12' : weather.time.hour % 12}:${
         weather.time.minute < 10 ? '0' + weather.time.minute : weather.time.minute
       }
           ${weather.time.hour < 12 ? 'AM' : 'PM'},
           the weather in ${weather.locale.location}, ${weather.locale.country} consists of
           ${weather.weather}.<br>The temperature is ${weather.current}°F, with a max today of
-          ${weather.max}°F and min of ${weather.min}°F.`;
-      document.getElementById('icon').setAttribute('src', weather.iconUrl);
+          ${weather.max}°F and min of ${weather.min}°F.`);
 
-      document.getElementById('locat').value = '';
-      document
-        .getElementById('locat')
-        .setAttribute('placeholder', `${weather.locale.location}, ${weather.locale.country}`);
+      $('#icon').attr('src', weather.iconUrl);
 
-      let replaceDays = document.querySelectorAll('tr')[0];
-      let replaceForecasts = document.querySelectorAll('tr')[1];
+      $('#locat')
+        .val('')
+        .attr('placeholder', `${weather.locale.location}, ${weather.locale.country}`);
 
-      let days = document.createElement('tr');
-      let forecasts = document.createElement('tr');
+      let replaceDays = $('tr:first');
+      let replaceForecasts = $('tr:nth-of-type(1)');
+
+      let days = $(document.createElement('tr'));
+      let forecasts = $(document.createElement('tr'));
 
       for (let day of weather.dailyForecasts) {
-        let dayText = document.createElement('th');
-        let dayForecast = document.createElement('td');
-        dayForecast.classList.add('dropdown');
+        let dayText = $(document.createElement('th')).html(day.day.slice(0, 3).toUpperCase());
+        let dayForecast = $(document.createElement('td')).addClass('dropdown');
 
-        let icon = document.createElement('img');
-        let min = document.createElement('span');
-        let max = document.createElement('span');
+        let icon = $(document.createElement('img')).attr('src', day.iconUrl);
+        let min = $(document.createElement('span')).html(day.min + ' ');
+        let max = $(document.createElement('span')).html(day.max);
+        let tri = $(document.createElement('div')).addClass('triangle');
 
-        dayText.innerHTML = day.day.slice(0, 3).toUpperCase();
-        min.innerHTML = day.min + ' ';
-        max.innerHTML = day.max;
-        icon.setAttribute('src', day.iconUrl);
-
-        let line = document.createElement('div');
-        line.classList.add('triangle');
-
-        dayForecast.append(icon, max, min, line);
+        dayForecast.append(icon, max, min, tri);
 
         days.append(dayText);
         forecasts.append(dayForecast);
@@ -129,10 +121,9 @@ function putWeather(locat, chart) {
         times = [];
       while (weatherRecords.length > 0) weatherRecords.pop();
 
-      let dayOverview = document.createElement('div');
-      dayOverview.classList.add('dropdown-content');
+      let dayOverview = $(document.createElement('div')).addClass('dropdown-content');
 
-      let dropdowns = forecasts.childNodes;
+      let dropdowns = forecasts.children();
       let count = 0;
 
       weather.hourForecasts.forEach((elem, i, arr) => {
@@ -141,10 +132,8 @@ function putWeather(locat, chart) {
           elem.time.hour < 12 ? 'AM' : 'PM'
         }`;
 
-        let img = document.createElement('img');
-        img.setAttribute('src', elem.iconUrl);
-        let info = document.createElement('p');
-        info.innerHTML = `${hr12} ${elem.temp.toFixed(0)}°`;
+        let img = $(document.createElement('img')).attr('src', elem.iconUrl);
+        let info = $(document.createElement('p')).html(`${hr12} ${elem.temp.toFixed(0)}°`);
 
         if (count < dropdowns.length) {
           let percent = scaleRange(
@@ -154,15 +143,13 @@ function putWeather(locat, chart) {
             0,
             100
           ).toFixed(0);
-          let tempBar = document.createElement('span');
-          tempBar.style.width = `${percent}px`;
+          let tempBar = $(document.createElement('span')).css('width', `${percent}px`);
 
           dayOverview.append(tempBar, info, img);
 
           if (i === arr.length - 1 || elem.time.day !== arr[i + 1].time.day) {
-            dropdowns[count++].append(dayOverview);
-            dayOverview = document.createElement('div');
-            dayOverview.classList.add('dropdown-content');
+            $(dropdowns[count++]).append(dayOverview);
+            dayOverview = $(document.createElement('div')).addClass('dropdown-content');
           }
         }
 
@@ -173,9 +160,8 @@ function putWeather(locat, chart) {
 
       document.body.classList.add('fade-out');
 
-      // update 5-day forecast
-      replaceDays.parentNode.replaceChild(days, replaceDays);
-      replaceForecasts.parentNode.replaceChild(forecasts, replaceForecasts);
+      replaceDays.replaceWith(days);
+      replaceForecasts.replaceWith(forecasts);
 
       // update chart
       chart.data.labels = times;
