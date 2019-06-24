@@ -56,15 +56,17 @@ document.addEventListener('DOMContentLoaded', event => {
   });
 
   if ('geolocation' in navigator) {
-    navigator.geolocation.getCurrentPosition(pos => putWeather(pos.coords, chart));
+    navigator.geolocation.getCurrentPosition(pos =>
+      putWeather(pos.coords, chart)
+    );
   } else {
     console.log('Geolocation is not available.');
   }
 
-  let input = document.getElementById('locat');
-  input.value = '';
-  input.onchange = () => {
-    putWeather(input.value, chart);
+  let form = document.querySelector('form');
+  form.onsubmit = event => {
+    event.preventDefault();
+    putWeather(document.getElementById('locat').value, chart);
   };
 });
 
@@ -83,18 +85,30 @@ function putWeather(locat, chart) {
       console.log(weather);
 
       let hour = weather.time.hour % 12 === 0 ? '12' : weather.time.hour % 12;
-      let min = weather.time.minute < 10 ? '0' + weather.time.minute : weather.time.minute;
-      document.getElementById('description').innerHTML = `As of ${weather.time.day} ${hour}:${min}
+      let min =
+        weather.time.minute < 10
+          ? '0' + weather.time.minute
+          : weather.time.minute;
+      document.getElementById('description').innerHTML = `As of ${
+        weather.time.day
+      } ${hour}:${min}
           ${weather.time.hour < 12 ? 'AM' : 'PM'},
-          the weather in ${weather.locale.location}, ${weather.locale.country} consists of
-          ${weather.weather}.<br>The temperature is ${weather.current}°F, with a max today of
+          the weather in ${weather.locale.location}, ${
+        weather.locale.country
+      } consists of
+          ${weather.weather}.<br>The temperature is ${
+        weather.current
+      }°F, with a max today of
           ${weather.max}°F and min of ${weather.min}°F.`;
       document.getElementById('icon').setAttribute('src', weather.iconUrl);
 
       document.getElementById('locat').value = '';
       document
         .getElementById('locat')
-        .setAttribute('placeholder', `${weather.locale.location}, ${weather.locale.country}`);
+        .setAttribute(
+          'placeholder',
+          `${weather.locale.location}, ${weather.locale.country}`
+        );
 
       let replaceDays = document.querySelectorAll('tr')[0];
       let replaceForecasts = document.querySelectorAll('tr')[1];
@@ -188,9 +202,7 @@ function putWeather(locat, chart) {
       console.error('Invalid location:', err);
       let input = document.getElementById('locat');
       input.value = '';
-      document
-        .getElementById('locat')
-        .setAttribute('placeholder', 'Invalid location! Enter a city.');
+      input.setAttribute('placeholder', 'Invalid location! Enter a city.');
     });
 }
 

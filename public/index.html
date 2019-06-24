@@ -12,8 +12,8 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script src="scripts.js"></script>
-    <!-- <script src="jquery-scripts.js"></script> -->
+    <!-- <script src="scripts.js"></script> -->
+    <script src="jquery-scripts.js"></script>
 
     <link
       href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap"
@@ -30,7 +30,9 @@
       document.body.classList.add('fade-out');
     </script>
     <h1>SIMPLE WEATHER</h1>
-    <input type="text" id="locat" name="location" placeholder="Location" />
+    <form>
+      <input type="text" id="locat" name="location" placeholder="Location" />
+    </form>
     <div class="container">
       <div id="current-weather">
         <img id="icon" src="" />

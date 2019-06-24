@@ -63,11 +63,10 @@ $(document).ready(() => {
     console.log('Geolocation is not available.');
   }
 
-  $('#locat')
-    .val('')
-    .change(() => {
-      putWeather($('#locat').val(), chart);
-    });
+  $('form').on('submit', event => {
+    event.preventDefault();
+    putWeather($('#locat').val(), chart);
+  });
 });
 
 function putWeather(locat, chart) {
@@ -182,7 +181,7 @@ function putWeather(locat, chart) {
         weatherRecords.push(elem.weather);
       });
 
-      document.body.classList.add('fade-out');
+      $('body').addClass('fade-out');
 
       replaceDays.replaceWith(days);
       replaceForecasts.replaceWith(forecasts);
@@ -192,15 +191,13 @@ function putWeather(locat, chart) {
       chart.data.datasets[0].data = temps;
       chart.update();
 
-      document.body.classList.remove('fade-out');
+      $('body').removeClass('fade-out');
     })
     .fail(err => {
       console.error('Invalid location:', err);
-      let input = document.getElementById('locat');
-      input.value = '';
-      document
-        .getElementById('locat')
-        .setAttribute('placeholder', 'Invalid location! Enter a city.');
+      $('#locat')
+        .val('')
+        .attr('placeholder', 'Invalid location! Enter a city.');
     });
 }
 

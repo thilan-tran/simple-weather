@@ -76,7 +76,13 @@ function getWeather(locat) {
             day: p_day,
             hour: p_hour
           },
-          iconUrl: getIconUrl(p_weather, p_UTCtime, TZoffset, UTCsunrise, UTCsunset)
+          iconUrl: getIconUrl(
+            p_weather,
+            p_UTCtime,
+            TZoffset,
+            UTCsunrise,
+            UTCsunset
+          )
         });
         dailyTemps.push(p_temp);
 
@@ -106,13 +112,22 @@ function getWeather(locat) {
             weather: snapshotWeather,
             min: dayMin,
             max: dayMax,
-            iconUrl: getIconUrl(snapshotWeather, snapshotTime, TZoffset, UTCsunrise, UTCsunset)
+            iconUrl: getIconUrl(
+              snapshotWeather,
+              snapshotTime,
+              TZoffset,
+              UTCsunrise,
+              UTCsunset
+            )
           });
         }
       }
 
       return new Promise((res, rej) => {
-        let { day, hour, minute } = shiftTimezone(weatherCurrent.dt * 1000, TZoffset);
+        let { day, hour, minute } = shiftTimezone(
+          weatherCurrent.dt * 1000,
+          TZoffset
+        );
         const weather = {
           main: weatherCurrent.weather[0].main,
           weather: weatherCurrent.weather[0].description,
@@ -148,7 +163,15 @@ function getWeather(locat) {
 }
 
 function shiftTimezone(time, offset) {
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const days = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday'
+  ];
   let date = new Date(time);
   let dayShift = date.getDay();
   let hourShift = Math.round(date.getHours() + offset / 3600); // offset in seconds
@@ -170,7 +193,15 @@ function shiftTimezone(time, offset) {
 }
 
 function getIconUrl(condition, time, offset, sunrise, sunset) {
-  const imgConditions = ['thunderstorm', 'drizzle', 'rain', 'snow', 'haze', 'clear', 'clouds'];
+  const imgConditions = [
+    'thunderstorm',
+    'drizzle',
+    'rain',
+    'snow',
+    'haze',
+    'clear',
+    'clouds'
+  ];
   let { day, hour, minute } = shiftTimezone(time, offset);
   let { hour: riseHr, minute: riseMin } = shiftTimezone(sunrise, offset);
   let { hour: setHr, minute: setMin } = shiftTimezone(sunset, offset);
