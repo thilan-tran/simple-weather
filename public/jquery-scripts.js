@@ -56,7 +56,9 @@ $(document).ready(() => {
   });
 
   if ('geolocation' in navigator) {
-    navigator.geolocation.getCurrentPosition(pos => putWeather(pos.coords, chart));
+    navigator.geolocation.getCurrentPosition(pos =>
+      putWeather(pos.coords, chart)
+    );
   } else {
     console.log('Geolocation is not available.');
   }
@@ -73,28 +75,39 @@ function putWeather(locat, chart) {
   if (typeof locat === 'object') query = `${locat.latitude},${locat.longitude}`;
   else query = locat;
 
-  fetch('/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ location: query })
+  $.ajax({
+    url: '/',
+    type: 'POST',
+    contentType: 'application/json',
+    dataType: 'json',
+    data: JSON.stringify({ location: query })
   })
-    .then(res => res.json())
-    .then(weather => {
+    .done((weather, textStatus, jqXHR) => {
       console.log(weather);
 
       let hour = weather.time.hour % 12 === 0 ? '12' : weather.time.hour % 12;
-      let min = weather.time.minute < 10 ? '0' + weather.time.minute : weather.time.minute;
+      let min =
+        weather.time.minute < 10
+          ? '0' + weather.time.minute
+          : weather.time.minute;
       $('#description').html(`As of ${weather.time.day} ${hour}:${min}
           ${weather.time.hour < 12 ? 'AM' : 'PM'},
-          the weather in ${weather.locale.location}, ${weather.locale.country} consists of
-          ${weather.weather}.<br>The temperature is ${weather.current}°F, with a max today of
+          the weather in ${weather.locale.location}, ${
+        weather.locale.country
+      } consists of
+          ${weather.weather}.<br>The temperature is ${
+        weather.current
+      }°F, with a max today of
           ${weather.max}°F and min of ${weather.min}°F.`);
 
       $('#icon').attr('src', weather.iconUrl);
 
       $('#locat')
         .val('')
-        .attr('placeholder', `${weather.locale.location}, ${weather.locale.country}`);
+        .attr(
+          'placeholder',
+          `${weather.locale.location}, ${weather.locale.country}`
+        );
 
       let replaceDays = $('tr:first');
       let replaceForecasts = $('tr:nth-of-type(1)');
@@ -103,7 +116,9 @@ function putWeather(locat, chart) {
       let forecasts = $(document.createElement('tr'));
 
       for (let day of weather.dailyForecasts) {
-        let dayText = $(document.createElement('th')).html(day.day.slice(0, 3).toUpperCase());
+        let dayText = $(document.createElement('th')).html(
+          day.day.slice(0, 3).toUpperCase()
+        );
         let dayForecast = $(document.createElement('td')).addClass('dropdown');
 
         let icon = $(document.createElement('img')).attr('src', day.iconUrl);
@@ -121,7 +136,9 @@ function putWeather(locat, chart) {
         times = [];
       while (weatherRecords.length > 0) weatherRecords.pop();
 
-      let dayOverview = $(document.createElement('div')).addClass('dropdown-content');
+      let dayOverview = $(document.createElement('div')).addClass(
+        'dropdown-content'
+      );
 
       let dropdowns = forecasts.children();
       let count = 0;
@@ -133,7 +150,9 @@ function putWeather(locat, chart) {
         }`;
 
         let img = $(document.createElement('img')).attr('src', elem.iconUrl);
-        let info = $(document.createElement('p')).html(`${hr12} ${elem.temp.toFixed(0)}°`);
+        let info = $(document.createElement('p')).html(
+          `${hr12} ${elem.temp.toFixed(0)}°`
+        );
 
         if (count < dropdowns.length) {
           let percent = scaleRange(
@@ -143,13 +162,18 @@ function putWeather(locat, chart) {
             0,
             100
           ).toFixed(0);
-          let tempBar = $(document.createElement('span')).css('width', `${percent}px`);
+          let tempBar = $(document.createElement('span')).css(
+            'width',
+            `${percent}px`
+          );
 
           dayOverview.append(tempBar, info, img);
 
           if (i === arr.length - 1 || elem.time.day !== arr[i + 1].time.day) {
             $(dropdowns[count++]).append(dayOverview);
-            dayOverview = $(document.createElement('div')).addClass('dropdown-content');
+            dayOverview = $(document.createElement('div')).addClass(
+              'dropdown-content'
+            );
           }
         }
 
@@ -170,7 +194,7 @@ function putWeather(locat, chart) {
 
       document.body.classList.remove('fade-out');
     })
-    .catch(err => {
+    .fail(err => {
       console.error('Invalid location:', err);
       let input = document.getElementById('locat');
       input.value = '';
