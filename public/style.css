@@ -45,6 +45,7 @@ input[type='text']:focus {
 }
 
 #current-weather {
+  white-space: pre-wrap;
   display: grid;
   margin: 20px auto;
   grid-template-columns: 80px auto;
