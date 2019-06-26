@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <!-- jQuery Implementation -->
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.js"
+      integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+      crossorigin="anonymous"
+    ></script>
+    <script src="jquery-index.js"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Oswald&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+
+    <title>Simple Weather</title>
+  </head>
+  <body>
+    <h1>SIMPLE WEATHER</h1>
+    <form>
+      <input type="text" id="locat" name="location" placeholder="Location" />
+    </form>
+    <div class="container">
+      <div id="current-weather">
+        <img id="icon" src="" />
+        <p id="description"></p>
+      </div>
+      <div id="forecast">
+        <table>
+          <thead id="days">
+            <tr></tr>
+          </thead>
+          <tbody id="forecast-data">
+            <tr></tr>
+          </tbody>
+        </table>
+      </div>
+      <canvas id="chart-forecast" width="400" height="150"></canvas>
+    </div>
+  </body>
+</html>

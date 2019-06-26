@@ -1,42 +1,47 @@
-/* global to access from chart callback */
-const weatherRecords = [];
-
 /* Chart.js config */
+
+/* shorten and skip some date ticks */
+function skipTicks(val, ind, values) {
+  let fields = val.split(' ');
+  if (ind % 2 === 0)
+    if (ind === 0 || fields[0] !== values[ind - 2].split(' ')[0]) {
+      return fields[0];
+    }
+  return '';
+}
+
+function appendDegree(val, ind, values) {
+  return val + '°';
+}
+
+/*  additional weather description on tooltip hover */
+function appendDescription(tooltip, data) {
+  return data.datasets[1].data[tooltip[0].index].toUpperCase();
+}
+
 const config = {
   legend: { display: false },
   scales: {
     xAxes: [
       {
         gridLines: { display: false },
-        ticks: {
-          callback: (val, ind, values) => {
-            /* shorten and skip some date ticks */
-            let fields = val.split(' ');
-            if (ind % 2 === 0)
-              if (ind === 0 || fields[0] !== values[ind - 2].split(' ')[0]) {
-                return fields[0];
-              }
-            return '';
-          }
-        }
+        ticks: { callback: skipTicks }
       }
     ],
-    yAxes: [{ ticks: { callback: (val, ind, values) => val + '°' } }]
+    yAxes: [{ ticks: { callback: appendDegree } }]
   },
   tooltips: {
     intersect: false,
-    callbacks: {
-      afterTitle: (tooltipItem, chart) => {
-        return weatherRecords[tooltipItem[0].index].toUpperCase();
-      }
-    },
+    callbacks: { afterTitle: appendDescription },
     bodyFontSize: 16,
     titleFontSize: 16
   }
 };
 
 document.addEventListener('DOMContentLoaded', event => {
-  /* chart.js setup */
+  document.body.classList.add('fade-out');
+
+  /* Chart.js setup */
   Chart.defaults.global.defaultFontFamily = 'Oswald';
   const dataset = {
     label: 'Temperature',
@@ -45,12 +50,16 @@ document.addEventListener('DOMContentLoaded', event => {
     pointRadius: 4,
     data: []
   };
+  const records = {
+    label: 'Records',
+    data: []
+  };
   const ctx = document.getElementById('chart-forecast').getContext('2d');
   const chart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: [],
-      datasets: [dataset]
+      datasets: [dataset, records]
     },
     options: config
   });
@@ -89,17 +98,15 @@ function putWeather(locat, chart) {
         weather.time.minute < 10
           ? '0' + weather.time.minute
           : weather.time.minute;
-      document.getElementById('description').innerHTML = `As of ${
-        weather.time.day
-      } ${hour}:${min}
-          ${weather.time.hour < 12 ? 'AM' : 'PM'},
-          the weather in ${weather.locale.location}, ${
+      let description = `As of ${weather.time.day} ${hour}:${min} ${
+        weather.time.hour < 12 ? 'AM' : 'PM'
+      }, the weather in ${weather.locale.location}, ${
         weather.locale.country
-      } consists of
-          ${weather.weather}.<br>The temperature is ${
+      } consists of ${weather.weather}.\nThe temperature is ${
         weather.current
-      }°F, with a max today of
-          ${weather.max}°F and min of ${weather.min}°F.`;
+      }°F, with a max today of ${weather.max}°F and min of ${weather.min}°F.`;
+
+      document.getElementById('description').innerHTML = description;
       document.getElementById('icon').setAttribute('src', weather.iconUrl);
 
       document.getElementById('locat').value = '';
@@ -126,8 +133,8 @@ function putWeather(locat, chart) {
         let max = document.createElement('span');
 
         dayText.innerHTML = day.day.slice(0, 3).toUpperCase();
-        min.innerHTML = day.min + ' ';
-        max.innerHTML = day.max;
+        min.innerHTML = day.min;
+        max.innerHTML = day.max + ' ';
         icon.setAttribute('src', day.iconUrl);
 
         let line = document.createElement('div');
@@ -140,8 +147,8 @@ function putWeather(locat, chart) {
       }
 
       let temps = [],
-        times = [];
-      while (weatherRecords.length > 0) weatherRecords.pop();
+        times = [],
+        records = [];
 
       let dayOverview = document.createElement('div');
       dayOverview.classList.add('dropdown-content');
@@ -182,7 +189,7 @@ function putWeather(locat, chart) {
 
         times.push(`${dayAbbrev} ${hr12}`);
         temps.push(elem.temp);
-        weatherRecords.push(elem.weather);
+        records.push(elem.weather);
       });
 
       document.body.classList.add('fade-out');
@@ -194,6 +201,7 @@ function putWeather(locat, chart) {
       /* update chart */
       chart.data.labels = times;
       chart.data.datasets[0].data = temps;
+      chart.data.datasets[1].data = records;
       chart.update();
 
       document.body.classList.remove('fade-out');
@@ -206,6 +214,7 @@ function putWeather(locat, chart) {
     });
 }
 
+/* Arduino Map function */
 function scaleRange(x, in_min, in_max, out_min, out_max) {
   return ((x - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
 }
