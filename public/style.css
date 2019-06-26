@@ -45,7 +45,7 @@ input[type='text']:focus {
 }
 
 #current-weather {
-  white-space: pre-wrap;
+  /* white-space: pre-wrap; */
   display: grid;
   margin: 20px auto;
   grid-template-columns: 80px auto;
@@ -55,6 +55,11 @@ input[type='text']:focus {
 #current-weather img {
   width: 100px;
   margin: 10px auto;
+}
+
+#current-weather p {
+  /* text-align: justify; */
+  /* text-justify: auto; */
 }
 
 #forecast table {
@@ -71,11 +76,16 @@ input[type='text']:focus {
   color: #a9a9a9;
 }
 
-th {
+#forecast th {
   color: #10849d;
 }
 
+#forecast td {
+  position: relative;
+}
+
 td img {
+  margin-left: 30px;
   width: 50px;
 }
 
@@ -86,22 +96,19 @@ td img {
 .dropdown-content {
   display: none;
   position: absolute;
-  padding: 10px;
-  margin-left: -10px;
-  min-width: 140px;
-  font-size: 19px;
   background-color: #ddd;
   color: #4b545f;
   z-index: 1;
 }
 
 .dropdown-content img {
+  margin-left: auto;
   width: 40px;
-  margin-right: -10px;
+  text-align: right;
 }
 
 .dropdown-content p {
-  margin: auto;
+  margin: 5px 10px 5px;
   text-align: left;
 }
 
@@ -112,8 +119,14 @@ td img {
 }
 
 .dropdown:hover .dropdown-content {
+  font-size: 19px;
+  left: 50%;
+  width: 150px;
+  padding: 10px;
+  margin-left: -85px;
+
   display: grid;
-  grid-template-columns: 0px auto auto;
+  grid-template-columns: 0px auto 40px;
   animation: fade-in 0.5s;
   border: 2px solid #4b545f;
   border-radius: 10px;
@@ -145,49 +158,76 @@ td img {
   border-top: 5px solid #a9a9a9;
 }
 
-@media (min-width: 350px) {
+@media (max-width: 900px) {
   body {
+    font-size: 18px;
+  }
+
+  #forecast table span {
     font-size: 15px;
-  }
-
-  td img {
-    margin-left: 5px;
-  }
-
-  .dropdown-content {
-    font-size: 15px;
-    min-width: 120px;
-    margin-left: -20px;
-  }
-}
-
-@media (min-width: 750px) {
-  body {
-    font-size: 20px;
   }
 
   td img {
     margin-left: 10px;
-  }
-
-  .dropdown-content {
-    min-width: 130px;
-    margin-left: -20px;
+    width: 50px;
   }
 }
 
-@media (min-width: 1100px) {
+@media (max-width: 705px) {
   body {
-    font-size: 20px;
-    width: 70%;
+    width: 90%;
+    font-size: 16px;
+  }
+
+  .container {
+    width: 95%;
+  }
+
+  #forecast table span {
+    font-size: 14px;
   }
 
   td img {
-    margin-left: 35px;
+    margin-left: 10px;
+    width: 50px;
   }
 
-  .dropdown-content {
-    min-width: 160px;
-    margin-left: -16px;
+  .dropdown:hover .dropdown-content {
+    font-size: 14px;
+    width: 120px;
+    margin-left: -70px;
+  }
+
+  .dropdown-content p {
+    margin: 8px 5px 5px;
+  }
+}
+
+@media (max-width: 550px) {
+  body {
+    width: 90%;
+    font-size: 16px;
+  }
+
+  .container {
+    width: 95%;
+  }
+
+  #forecast table span {
+    font-size: 14px;
+  }
+
+  #forecast table img {
+    margin-right: 20px;
+  }
+
+  td img {
+    width: 40px;
+  }
+
+  .dropdown:hover .dropdown-content {
+    font-size: 14px;
+    width: 110px;
+    margin-left: -65px;
   }
 }
