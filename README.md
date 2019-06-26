@@ -4,13 +4,17 @@ This is a simple weather application built using the OpenWeather API and Chart.j
 
 - *Front-end implementations*:
   - [X] native JavaScript
+    - `index.html index.js`
   - [X] jQuery
-  - [ ] React
+    - `jquery-index.html jquery-index.js`
+  - [X] React
+    - `react-index.html react-index.js`
   - [ ] Angular
   - [ ] Vue
 
 - *Back-end implementations*:
   - [X] Node.js
+    - `server.js`
   - [ ] Flask
   - [ ] Django
   - [ ] Go
