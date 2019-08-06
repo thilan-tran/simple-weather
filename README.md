@@ -15,7 +15,8 @@ This is a simple weather application built using the OpenWeather API and Chart.j
 - *Back-end implementations*:
   - [X] Node.js
     - `server.js`
-  - [ ] Flask
+  - [X] Flask
+    - `server.py`
   - [ ] Django
   - [ ] Go
   - [ ] C#
