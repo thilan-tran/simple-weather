@@ -1,28 +1,30 @@
 const axios = require('axios');
-const bodyParser = require('body-parser');
 const express = require('express');
-const app = express();
-const fetch = require('node-fetch');
 const setTZ = require('set-tz');
+const dotenv = require('dotenv');
+
+const app = express();
+setTZ('UTC');
+dotenv.config();
 
 // OpenWeatherMap
-const apiKey = '42030d9df44d93e47e1f8bdb762c1848';
+const apiKey = process.env.API_KEY;
 const units = 'imperial';
 const weatherUrl = `http://api.openweathermap.org/data/2.5/weather?units=${units}&APPID=${apiKey}`;
 const forecastUrl = `http://api.openweathermap.org/data/2.5/forecast?units=${units}&APPID=${apiKey}`;
 
-setTZ('UTC');
-
 app.use(express.static('public'));
 app.use(express.json());
 
-app.listen(3000, () => console.log('Listening on port 3000.'));
+app.listen(process.env.PORT, () => console.log(`Listening on port ${process.env.PORT}.`));
 
-app.post('/', (req, res) => {
+app.post('/', (req, res, next) => {
   console.log(`POST request received for ${req.body.location}.`);
   getWeather(req.body.location).then(weather => {
     console.log('Weather retrieved.');
     res.send(weather);
+  }).catch(err => {
+    next(err);
   });
 });
 
@@ -159,7 +161,12 @@ function getWeather(locat) {
         res(weather);
       });
     })
-    .catch(err => console.error('Error retrieving weather:', err));
+    .catch(err => {
+      return new Promise((res, rej) =>{
+        rej(err.response.status + ': ' + err.response.statusText)
+      });
+    })
+    // .catch(err => console.error('Error retrieving weather:', err));
 }
 
 function shiftTimezone(time, offset) {
