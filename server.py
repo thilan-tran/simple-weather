@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from datetime import datetime
 from config import Config
 
@@ -20,15 +20,23 @@ def get_weather():
         lat = float(coords[0])
         lon = float(coords[1])
         query = f'lat={lat}&lon={lon}'
-    except:
+    except ValueError:
         query = f'q={location}'
 
     print(f'POST request received for {query}')
 
-    current_weather = requests.get(weather_url + '&' + query).json()
-    forecast_weather = requests.get(forecast_url + '&' + query).json().get('list')
+    try:
+        current_weather = requests.get(weather_url + '&' + query)
+        current_weather.raise_for_status()
+        forecast_weather = requests.get(forecast_url + '&' + query)
+        forecast_weather.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        print('HTTP error:', err)
+        abort(404)
+
+    current_weather = current_weather.json()
+    forecast_weather = forecast_weather.json().get('list')
     print('Weather retrieved.')
-    print(current_weather)
 
     timezone = current_weather.get('timezone')
     UTC_sunrise  = current_weather.get('sys').get('sunrise')

@@ -159,7 +159,7 @@ function getWeather(locat) {
         res(weather);
       });
     })
-    .catch(err => console.error('Error retrieving weather!', err));
+    .catch(err => console.error('Error retrieving weather:', err));
 }
 
 function shiftTimezone(time, offset) {
