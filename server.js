@@ -161,12 +161,9 @@ function getWeather(locat) {
         res(weather);
       });
     })
-    .catch(err => {
-      return new Promise((res, rej) =>{
+    .catch(err => new Promise((res, rej) => {
         rej(err.response.status + ': ' + err.response.statusText)
-      });
-    })
-    // .catch(err => console.error('Error retrieving weather:', err));
+    }));
 }
 
 function shiftTimezone(time, offset) {
